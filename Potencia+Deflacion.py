@@ -18,3 +18,16 @@ def power_iteration(A, niter=10_000, eps=1e-6):
         break
     a = v.T @ A @ v  
     return a, v
+
+def eigen(A, num=3, niter=10000, eps=1e-6):
+    J = A.copy()
+    eigenvalues = []
+    eigenvectors = np.zeros((A.shape[0], num))
+
+    for i in range(num):
+      l, v = power_iteration(J, eps=1e-12)
+      eigenvalues.append(l)
+      eigenvectors[:, i] = v
+      J = J.astype(float)
+      J -= l * np.outer(v, v)
+    return np.array(eigenvalues), eigenvectors
