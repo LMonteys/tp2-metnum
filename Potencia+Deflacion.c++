@@ -80,8 +80,7 @@ int main(int argc, char** argv) {
             fin >> A(i, j);
         }
     }
-    cout << A << endl;
-
+    
     int eps = 0;
     fin >> eps;
     fin.close();
