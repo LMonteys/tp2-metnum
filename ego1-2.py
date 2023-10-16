@@ -45,8 +45,8 @@ print(f'Correlación de matrices de adyacencia aplanadas: {correlation}')
 
 
 # Correlación de listas de autovalores
-eigenvalues, _ = np.linalg.eig(adjacency_matrix)
-eigenvalues_original = np.linalg.eigvals(adjacency_matrix)
+eigenvalues, _ = np.linalg.eig(adjacency_matrix) # ¿Usar matriz de adyacencia o laplaciana?
+eigenvalues_original = np.linalg.eigvals(adjacency_matrix) # ¿Usar matriz de adyacencia o laplaciana?
 correlation = abs(np.corrcoef(eigenvalues, eigenvalues_original)[0,1])  # ¿¿¿A esto se refieren con "correlación"??? ¿O a producto interno?
                                                                         # Le puse abs porque me estaba dando un número complejo
 print(f'Correlación de listas de autovalores: {correlation}')
