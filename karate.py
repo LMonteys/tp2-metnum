@@ -40,7 +40,7 @@ pos = nx.spring_layout(G)
 nx.draw_networkx_nodes(G, pos, node_size=1100, node_color=node_colors, node_shape='s')
 nx.draw_networkx_edges(G, pos)
 nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
-plt.show()
+#plt.show()
 
 
 
@@ -54,8 +54,10 @@ matriz_diagonal = np.diag(diagonal)
 
 matriz_laplaciana = matriz_diagonal - matriz_adyacencia
 
-a, v = pt.eigen(matriz_laplaciana, num=n, eps=1e-12)
 
+a1, v1 = pt.eigen(matriz_laplaciana, num=n, eps=1e-12)
+
+a2, v2 = np.linalg.eig(matriz_laplaciana)
 
 file = open("Data\\karateclub_labels.txt", "r")
 grupo = np.array(file.readlines()).astype(np.float64)
@@ -63,5 +65,13 @@ file.close()
 
 correlaciones = np.zeros(n)
 for i in range(n):
-    correlaciones[i] = np.dot(v[i], grupo) / np.sqrt(np.dot(v[i], v[i])*np.dot(grupo, grupo))
+    correlaciones[i] = np.dot(v1[:,i], grupo) / np.sqrt(np.dot(v1[:,i], v1[:,i])*np.dot(grupo, grupo))
+
+correlaciones_numpy = np.zeros(n)
+for i in range(n):
+    correlaciones_numpy[i] = np.dot(v2[:,i], grupo) / np.sqrt(np.dot(v2[:,i], v2[:,i])*np.dot(grupo, grupo))
+
+print(np.sort(abs(correlaciones)), '\n', np.sort(abs(correlaciones_numpy)))
+
+
 
