@@ -70,6 +70,7 @@ int main(int argc, char** argv) {
 
     // Read matrix from file
     int nrows, ncols;
+    double eps;
     fin >> nrows >> ncols;
 
     MatrixXd A(nrows, ncols);
@@ -78,12 +79,10 @@ int main(int argc, char** argv) {
             fin >> A(i, j);
         }
     }
+    fin >> eps;
 
     fin.close();
-
-    // Perform eigenvalue calculation
-    int niter = 10000; // You were missing a semicolon here
-    double eps = 1e-12; // You need to set an appropriate value for eps
+    int niter = 10000;
 
     pair<Eigen::VectorXd, Eigen::MatrixXd> result = eigen(A, nrows, niter, eps);
 
