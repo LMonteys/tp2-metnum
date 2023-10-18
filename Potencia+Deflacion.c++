@@ -19,13 +19,12 @@ bool check_criterio(const Eigen::VectorXd& v, const Eigen::VectorXd& v_viejo, do
     return norm_diff < eps;
 }
 
-Eigen::VectorXd power_iteration(const Eigen::MatrixXd& A, int niter, double eps) {
-    double a = 1.0;
+    pair<double, Eigen::VectorXd> power_iteration(const Eigen::MatrixXd& A, int niter, double eps) {
     Eigen::VectorXd v = Eigen::VectorXd::Random(A.rows());
     v.normalize();
     
     for (int i = 0; i < niter; i++) {
-        Eigen::VectorXd v_viejo = v;
+        VectorXd v_viejo = v;
         v = matrix_vector_multiplication(A, v);
         v.normalize();
         
@@ -34,43 +33,51 @@ Eigen::VectorXd power_iteration(const Eigen::MatrixXd& A, int niter, double eps)
             break;
         }
     }
-    
-    double a_calculado = v.dot(matrix_vector_multiplication(A,v));
-    return std::make_pair(a_calculado, v);
+               
+
+    double a_calculado = v.dot(matrix_vector_multiplication(A, v));
+    return make_pair(a_calculado, v);
 }
 
-std::pair<Eigen::VectorXd, Eigen::MatrixXd> eigen(const Eigen::MatrixXd& A, int num, int niter, double eps) {
+    pair<Eigen::VectorXd, Eigen::MatrixXd> eigen(const Eigen::MatrixXd& A, int num, int niter, double eps) {
     Eigen::MatrixXd J = A;
     Eigen::VectorXd eigenvalues(num);
     Eigen::MatrixXd eigenvectors(A.rows(), num);
 
     for (int i = 0; i < num; i++) {
-        std::pair<double, Eigen::VectorXd> result = power_iteration(J, niter, eps);
+        pair<double, Eigen::VectorXd> result = power_iteration(J, niter, eps);
         eigenvalues(i) = result.first;
         eigenvectors.col(i) = result.second;
-        J -= eigenvalues(i) * result.second * result.second.transpose();
+        std::cout << J * eigenvectors.col(i)  << std::endl;
+        std::cout << eigenvalues(i) * eigenvectors.col(i) << std::endl;
+
+        std::cout << A * eigenvectors.col(i)  << std::endl;
+        std::cout << eigenvalues(i) * eigenvectors.col(i) << std::endl;
+        
+        J = J - (eigenvalues(i) * eigenvectors.col(i) * result.second.transpose());
+
+        std::cout <<  "\n";
+
     }
-
-    return std::make_pair(eigenvalues, eigenvectors);
+    return make_pair(eigenvalues, eigenvectors);
 }
-
 
 int main(int argc, char** argv) {
     if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " input_file output_file" << std::endl;
+        cerr << "Usage: " << argv[0] << " input_file output_file" << endl;
         return 1;
     }
 
     const char* input_file = argv[1];
     const char* output_file = argv[2];
 
-    std::ifstream fin(input_file);
+    ifstream fin(input_file);
     if (!fin.is_open()) {
-        std::cerr << "Error: could not open input file " << input_file << std::endl;
+        cerr << "Error: could not open input file " << input_file << endl;
         return 1;
     }
 
-    // Read matrix and vector from file
+    // Read matrix from file
     int nrows, ncols;
     fin >> nrows >> ncols;
 
@@ -80,23 +87,48 @@ int main(int argc, char** argv) {
             fin >> A(i, j);
         }
     }
-    
-    int eps = 0;
-    fin >> eps;
+
     fin.close();
 
-    // Perform matrix-vector multiplication
-    int niter = 10000
-    std::pair<double, Eigen::VectorXd> result = eigen(A, nrows, niter, eps);
+    // Perform eigenvalue calculation
+    int niter = 10000; // You were missing a semicolon here
+    double eps = 1e-12; // You need to set an appropriate value for eps
 
-    // Write result to output file
-    std::ofstream fout(output_file);
+    pair<Eigen::VectorXd, Eigen::MatrixXd> result = eigen(A, nrows, niter, eps);
+
+    // Write eigenvalues and eigenvectors to the output file
+    ofstream fout(output_file);
     if (!fout.is_open()) {
-        std::cerr << "Error: could not open output file " << output_file << std::endl;
+        cerr << "Error: could not open output file " << output_file << endl;
         return 1;
     }
+    
+    for (int i = 0; i < nrows; i++) {
+      for (int j = 0; j < ncols; j++) {
+          fout <<  A(i, j) <<  "\n";
+      }
+      fout << "-"  << "\n";
+    }
+  
+    
+    double first_eigenvalue = result.first(0);
+    Eigen::VectorXd first_eigenvector = result.second.col(0);
+        
+    double second_eigenvalue = result.first(1);
+    Eigen::VectorXd second_eigenvector = result.second.col(1);
+        
+    double third_eigenvalue = result.first(2);
+    Eigen::VectorXd third_eigenvector = result.second.col(2);
+        
+    Eigen::VectorXd normalized_first_eigenvector = first_eigenvector.normalized();
 
-    fout << result << std::endl;
+    fout << "1) " <<  (second_eigenvalue * second_eigenvector)  << "\n";
+    fout << "1) " <<  (A * second_eigenvector)  << "\n";
+
+    fout << "Eigenvalues:\n" << result.first << "\n";
+    fout << "Eigenvectors:\n" << result.second << "\n";
+        
+        
 
     fout.close();
 
