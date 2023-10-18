@@ -47,17 +47,8 @@ bool check_criterio(const Eigen::VectorXd& v, const Eigen::VectorXd& v_viejo, do
     for (int i = 0; i < num; i++) {
         pair<double, Eigen::VectorXd> result = power_iteration(J, niter, eps);
         eigenvalues(i) = result.first;
-        eigenvectors.col(i) = result.second;
-        std::cout << J * eigenvectors.col(i)  << std::endl;
-        std::cout << eigenvalues(i) * eigenvectors.col(i) << std::endl;
-
-        std::cout << A * eigenvectors.col(i)  << std::endl;
-        std::cout << eigenvalues(i) * eigenvectors.col(i) << std::endl;
-        
+        eigenvectors.col(i) = result.second;    
         J = J - (eigenvalues(i) * eigenvectors.col(i) * result.second.transpose());
-
-        std::cout <<  "\n";
-
     }
     return make_pair(eigenvalues, eigenvectors);
 }
@@ -102,33 +93,10 @@ int main(int argc, char** argv) {
         cerr << "Error: could not open output file " << output_file << endl;
         return 1;
     }
-    
-    for (int i = 0; i < nrows; i++) {
-      for (int j = 0; j < ncols; j++) {
-          fout <<  A(i, j) <<  "\n";
-      }
-      fout << "-"  << "\n";
-    }
-  
-    
-    double first_eigenvalue = result.first(0);
-    Eigen::VectorXd first_eigenvector = result.second.col(0);
-        
-    double second_eigenvalue = result.first(1);
-    Eigen::VectorXd second_eigenvector = result.second.col(1);
-        
-    double third_eigenvalue = result.first(2);
-    Eigen::VectorXd third_eigenvector = result.second.col(2);
-        
-    Eigen::VectorXd normalized_first_eigenvector = first_eigenvector.normalized();
-
-    fout << "1) " <<  (second_eigenvalue * second_eigenvector)  << "\n";
-    fout << "1) " <<  (A * second_eigenvector)  << "\n";
 
     fout << "Eigenvalues:\n" << result.first << "\n";
     fout << "Eigenvectors:\n" << result.second << "\n";
-        
-        
+            
 
     fout.close();
 
