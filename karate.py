@@ -14,23 +14,22 @@ for i in range(n):
     matriz_adyacencia[i] = filas[i].split()
 
 
-
-'''
-file = open("Data\\matriz_adyacencia.txt", "w")
-for f in matriz_adyacencia.astype(int):
-    for e in f:
-        file.write(f'{e}')
-        file.write(' ')
-    file.write('\n')
-file.close
-'''
-
-
 a, v = pt.power_iteration(matriz_adyacencia, eps=1e-12)
 
 
 centralidad = v
 centralidad_normalizada = v / sum(v)
+
+
+G = nx.from_numpy_array(matriz_adyacencia)
+node_labels = {node:(str(node+1)+"|"+str(round(centralidad[node], 2))) for node in G.nodes()}
+node_colors = [centralidad[node] for node in G.nodes()]
+pos = nx.spring_layout(G)
+nx.draw_networkx_nodes(G, pos, node_size=1100, node_color=node_colors, node_shape='s')
+nx.draw_networkx_edges(G, pos)
+nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
+plt.title("CENTRALIDAD")
+plt.show()
 
 
 G = nx.from_numpy_array(matriz_adyacencia)
@@ -40,7 +39,9 @@ pos = nx.spring_layout(G)
 nx.draw_networkx_nodes(G, pos, node_size=1100, node_color=node_colors, node_shape='s')
 nx.draw_networkx_edges(G, pos)
 nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
-#plt.show()
+plt.title("CENTRALIDAD NORMALIZADA")
+plt.show()
+
 
 
 
@@ -64,14 +65,42 @@ grupo = np.array(file.readlines()).astype(np.float64)
 file.close()
 
 correlaciones = np.zeros(n)
+max_v = 0;
+max_v_np = 0;
 for i in range(n):
     correlaciones[i] = np.dot(v1[:,i], grupo) / np.sqrt(np.dot(v1[:,i], v1[:,i])*np.dot(grupo, grupo))
+    if abs(correlaciones[max_v]) < abs(correlaciones[i]):
+        max_v = i
 
 correlaciones_numpy = np.zeros(n)
 for i in range(n):
     correlaciones_numpy[i] = np.dot(v2[:,i], grupo) / np.sqrt(np.dot(v2[:,i], v2[:,i])*np.dot(grupo, grupo))
+    if abs(correlaciones_numpy[max_v_np]) < abs(correlaciones_numpy[i]):
+        max_v_np = i
 
-print(np.sort(abs(correlaciones)), '\n', np.sort(abs(correlaciones_numpy)))
 
 
 
+
+
+
+G = nx.from_numpy_array(matriz_adyacencia)
+node_labels = {node:(str(node+1)+"|"+str(round(v1[node, max_v], 2))) for node in G.nodes()}
+node_colors = [v1[node, max_v] for node in G.nodes()]
+pos = nx.spring_layout(G)
+nx.draw_networkx_nodes(G, pos, node_size=1100, node_color=node_colors, node_shape='s')
+nx.draw_networkx_edges(G, pos)
+nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
+plt.title("MEJOR AUTOVECTOR")
+plt.show()
+
+
+G = nx.from_numpy_array(matriz_adyacencia)
+node_labels = {node:(str(node+1)+"|"+str(round(v2[node, max_v_np], 2))) for node in G.nodes()}
+node_colors = [v2[node, max_v_np] for node in G.nodes()]
+pos = nx.spring_layout(G)
+nx.draw_networkx_nodes(G, pos, node_size=1100, node_color=node_colors, node_shape='s')
+nx.draw_networkx_edges(G, pos)
+nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
+plt.title("MEJOR AUTOVECTOR NUMPY")
+plt.show()
