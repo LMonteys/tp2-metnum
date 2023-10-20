@@ -3,7 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 pt = __import__("Potencia+Deflacion")
 
-file = open("Data\\karateclub_matriz.txt", "r")
+file = open("./data/karateclub_matriz.txt", "r")
 filas = file.readlines()
 file.close()
 
@@ -60,7 +60,7 @@ a1, v1 = pt.eigen(matriz_laplaciana, num=n, eps=1e-12)
 
 a2, v2 = np.linalg.eig(matriz_laplaciana)
 
-file = open("Data\\karateclub_labels.txt", "r")
+file = open("./data/karateclub_labels.txt", "r")
 grupo = np.array(file.readlines()).astype(np.float64)
 file.close()
 
