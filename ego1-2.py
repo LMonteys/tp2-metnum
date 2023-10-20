@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
-feat = np.loadtxt("..//ego-facebook.feat")[:, 1:]  # Sin el primer atributo porque es el id del nodo
-feat_with_first = np.loadtxt("..//ego-facebook.feat")
-edges = np.loadtxt("..//ego-facebook.edges", dtype=int)
+feat = np.loadtxt("./data/ego-facebook.feat")[:, 1:]  # Sin el primer atributo porque es el id del nodo
+feat_with_first = np.loadtxt("./data/ego-facebook.feat")
+edges = np.loadtxt("./data/ego-facebook.edges", dtype=int)
 
 
 # Mapear ids de nodo a índices de matriz
