@@ -2,10 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
+def correlacion(x, y):
+    mediaX = np.mean(x)
+    mediaY = np.mean(y)
+    return (np.dot((x-mediaX),(y-mediaY))) / np.sqrt(np.dot((x-mediaX),(x-mediaX)) * np.dot((y-mediaY),(y-mediaY)))
+
 feat = np.loadtxt("./data/ego-facebook.feat")[:, 1:]  # Sin el primer atributo porque es el id del nodo
 feat_with_first = np.loadtxt("./data/ego-facebook.feat")
 edges = np.loadtxt("./data/ego-facebook.edges", dtype=int)
-
 
 # Mapear ids de nodo a índices de matriz
 edge_map = {}
@@ -39,7 +43,7 @@ for i, j in edges:
 original_flattened = adjacency_matrix.flatten()
 nuestra_flattened = nx.adjacency_matrix(G).todense().flatten()
 
-correlation = np.corrcoef(original_flattened, nuestra_flattened)[0,1] # ¿¿¿A esto se refieren con "correlación"??? ¿O a producto interno?
+correlation = correlacion(original_flattened, nuestra_flattened) # ¿¿¿A esto se refieren con "correlación"??? ¿O a producto interno?
 print(f'Correlación de matrices de adyacencia aplanadas: {correlation}')
 
 
@@ -47,6 +51,5 @@ print(f'Correlación de matrices de adyacencia aplanadas: {correlation}')
 # Correlación de listas de autovalores
 eigenvalues, _ = np.linalg.eig(adjacency_matrix) # ¿Usar matriz de adyacencia o laplaciana?
 eigenvalues_original = np.linalg.eigvals(adjacency_matrix) # ¿Usar matriz de adyacencia o laplaciana?
-correlation = abs(np.corrcoef(eigenvalues, eigenvalues_original)[0,1])  # ¿¿¿A esto se refieren con "correlación"??? ¿O a producto interno?
-                                                                        # Le puse abs porque me estaba dando un número complejo
+correlation = abs(correlacion(eigenvalues, eigenvalues_original)) # Le puse abs porque me estaba dando un número complejo
 print(f'Correlación de listas de autovalores: {correlation}')

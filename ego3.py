@@ -2,6 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
+def correlacion(x, y):
+    mediaX = np.mean(x)
+    mediaY = np.mean(y)
+    return (np.dot((x-mediaX),(y-mediaY))) / np.sqrt(np.dot((x-mediaX),(x-mediaX)) * np.dot((y-mediaY),(y-mediaY)))
+
 feat = np.loadtxt("./data/ego-facebook.feat")[:, 1:]  # Sin el primer atributo porque es el id del nodo
 feat_with_first = np.loadtxt("./data/ego-facebook.feat")
 edges = np.loadtxt("./data/ego-facebook.edges", dtype=int)
@@ -43,12 +48,12 @@ for percentile_similarity in percentiles_to_test:
     
     # Correlación de listas de autovalores
     eigenvalues_original = np.linalg.eigvals(adjacency_matrix)
-    correlation_eigenvalues = abs(np.corrcoef(eigenvalues, eigenvalues_original)[0,1])
+    correlation_eigenvalues = abs(correlacion(eigenvalues, eigenvalues_original))
     correlations_eigenvalues.append(correlation_eigenvalues)
 
     # Correlación de matrices de adyacencia aplanadas
     nuestra_flattened = nx.adjacency_matrix(G).todense().flatten()
-    correlation_flat = np.corrcoef(original_flattened, nuestra_flattened)[0,1]
+    correlation_flat = correlacion(original_flattened, nuestra_flattened)
     correlations_flat.append(correlation_flat)
     print(f'Percentil: {percentile_similarity}, correlación flat: {correlation_flat}, correlación eigenvalues: {correlation_eigenvalues}')
 
