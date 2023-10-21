@@ -31,31 +31,29 @@ for i, j in edges:
     adjacency_matrix[j, i] = 1
 original_flattened = adjacency_matrix.flatten()
 
-percentiles_to_test = np.arange(0, 100, 1)
+umbrales = np.arange(-2, 12, 0.5)
 
-for percentile_similarity in percentiles_to_test:
+for umbral in umbrales:
     G = nx.Graph()
     for i in range(feat.shape[0]):
         G.add_node(i)
-    similarity_threshold = np.percentile(similarity_matrix, percentile_similarity)
     for i in range(similarity_matrix.shape[0]):
         for j in range(i+1, similarity_matrix.shape[1]):
-            if similarity_matrix[i,j] > similarity_threshold:
+            if similarity_matrix[i,j] > umbral:
                 G.add_edge(i, j)
 
-    eigenvalues, eigenvectors = np.linalg.eig(nx.adjacency_matrix(G).todense())
-
+    eigenvalues, eigenvectors = np.linalg.eigh(nx.adjacency_matrix(G).todense())
     
     # Correlación de listas de autovalores
-    eigenvalues_original = np.linalg.eigvals(adjacency_matrix)
-    correlation_eigenvalues = abs(correlacion(eigenvalues, eigenvalues_original))
+    eigenvalues_original, _ = np.linalg.eigh(adjacency_matrix)
+    correlation_eigenvalues = (correlacion(eigenvalues, eigenvalues_original))
     correlations_eigenvalues.append(correlation_eigenvalues)
 
     # Correlación de matrices de adyacencia aplanadas
     nuestra_flattened = nx.adjacency_matrix(G).todense().flatten()
     correlation_flat = correlacion(original_flattened, nuestra_flattened)
     correlations_flat.append(correlation_flat)
-    print(f'Percentil: {percentile_similarity}, correlación flat: {correlation_flat}, correlación eigenvalues: {correlation_eigenvalues}')
+    print(f'Umbral: {umbral}, correlación flat: {correlation_flat}, correlación eigenvalues: {correlation_eigenvalues}')
 
 # Printear maximos
 for correlations in [correlations_flat, correlations_eigenvalues]:
@@ -66,9 +64,9 @@ for correlations in [correlations_flat, correlations_eigenvalues]:
 
 # Graficar maximos
 for correlations in [correlations_flat, correlations_eigenvalues]:
-    plt.plot(percentiles_to_test, correlations)
-    plt.axvline(x=percentiles_to_test[np.argmax(correlations)], color='r', linestyle='--', label=f'Percentil {np.argmax(correlations)}')    
-    plt.xlabel('Umbral de similaridad (percentil)')
+    plt.plot(umbrales, correlations)
+    plt.axvline(x=umbrales[np.argmax(correlations)], color='r', linestyle='--', label=f'Percentil {np.argmax(correlations)}')    
+    plt.xlabel('Umbral de similaridad')
     plt.ylabel('Correlación')
     plt.legend()
     plt.show()
