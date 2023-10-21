@@ -11,6 +11,7 @@ n = len(filas)
 
 matriz_adyacencia = np.zeros((n,n))
 for i in range(n):
+    
     matriz_adyacencia[i] = filas[i].split()
 
 
@@ -86,7 +87,7 @@ for i in range(n):
 
 G = nx.from_numpy_array(matriz_adyacencia)
 node_labels = {node:(str(node+1)+"|"+str(round(v1[node, max_v], 2))) for node in G.nodes()}
-node_colors = [v1[node, max_v] for node in G.nodes()]
+node_colors = [v1[node, max_v] / abs(v1[node, max_v]) for node in G.nodes()]
 pos = nx.spring_layout(G)
 nx.draw_networkx_nodes(G, pos, node_size=1100, node_color=node_colors, node_shape='s')
 nx.draw_networkx_edges(G, pos)
@@ -97,7 +98,7 @@ plt.show()
 
 G = nx.from_numpy_array(matriz_adyacencia)
 node_labels = {node:(str(node+1)+"|"+str(round(v2[node, max_v_np], 2))) for node in G.nodes()}
-node_colors = [v2[node, max_v_np] for node in G.nodes()]
+node_colors = [v2[node, max_v_np] / abs(v2[node, max_v_np]) for node in G.nodes()]
 pos = nx.spring_layout(G)
 nx.draw_networkx_nodes(G, pos, node_size=1100, node_color=node_colors, node_shape='s')
 nx.draw_networkx_edges(G, pos)
