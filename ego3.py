@@ -2,6 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
+plt.style.use('seaborn-v0_8-darkgrid')
+naranja = '#F08228'
+azul = '#1F77B4'
+amarillo = '#F0E14A'
+rojo = '#D62728'
+
 def correlacion(x, y):
     mediaX = np.mean(x)
     mediaY = np.mean(y)
@@ -31,7 +37,7 @@ for i, j in edges:
     adjacency_matrix[j, i] = 1
 original_flattened = adjacency_matrix.flatten()
 
-umbrales = np.arange(-2, 12, 0.5)
+umbrales = np.arange(-0.25, 12, 0.25)
 
 for umbral in umbrales:
     G = nx.Graph()
@@ -53,20 +59,34 @@ for umbral in umbrales:
     nuestra_flattened = nx.adjacency_matrix(G).todense().flatten()
     correlation_flat = correlacion(original_flattened, nuestra_flattened)
     correlations_flat.append(correlation_flat)
-    print(f'Umbral: {umbral}, correlación flat: {correlation_flat}, correlación eigenvalues: {correlation_eigenvalues}')
+    print(f'Umbral: {umbral}, correlacion flat: {correlation_flat}, correlacion eigenvalues: {correlation_eigenvalues}')
 
 # Printear maximos
 for correlations in [correlations_flat, correlations_eigenvalues]:
-    max_correlation = max(correlations)
-    max_percentile = np.argmax(correlations)
-    print(f'Max correlation: {max_correlation}')
-    print(f'Max percentile: {max_percentile}')
+    print(f'Max correlation: {np.max(correlations)}')
+    print(f'Umbral: {umbrales[np.argmax(correlations)]}')
 
-# Graficar maximos
-for correlations in [correlations_flat, correlations_eigenvalues]:
-    plt.plot(umbrales, correlations)
-    plt.axvline(x=umbrales[np.argmax(correlations)], color='r', linestyle='--', label=f'Percentil {np.argmax(correlations)}')    
-    plt.xlabel('Umbral de similaridad')
-    plt.ylabel('Correlación')
-    plt.legend()
-    plt.show()
+# Graficar
+fig, ax1 = plt.subplots()
+
+color = azul
+ax1.set_xlabel('Umbral de similaridad')
+ax1.set_ylabel('Correlación de autovalores', color=color)
+ax1.plot(umbrales, correlations_eigenvalues, color=color, marker='o')
+ax1.tick_params(axis='y', labelcolor=color)
+
+ax2 = ax1.twinx()  # create second y-axis
+
+color = naranja
+ax2.set_ylabel('Correlación de matrices de adyacencia', color=color)
+ax2.plot(umbrales, correlations_flat, color=color, marker='o')
+ax2.tick_params(axis='y', labelcolor=color)
+
+# add vertical lines
+#ax1.axvline(x=umbrales[np.argmax(correlations_eigenvalues)], color='g', linestyle='--', label=f'Eigenvalues óptimo: {umbrales[np.argmax(correlations_eigenvalues[0])]}')
+#ax2.axvline(x=umbrales[np.argmax(correlations_flat)], color='r', linestyle='--', label=f'Flat óptimo: {umbrales[np.argmax(correlations_flat)]}')
+#plt.axvline(x=umbrales[np.argmax(correlations)], color='orange', linestyle='--', label=f'Primer óptimo: {umbrales[np.argmax(correlations)]}')    
+#plt.axvline(x=umbrales[::-1][np.argmax(correlations[::-1])], color='red', linestyle='--', label=f'Último óptimo: {umbrales[::-1][np.argmax(correlations[::-1])]}')    
+
+fig.tight_layout()
+plt.show()

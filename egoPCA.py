@@ -2,7 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
-plt.style.use('seaborn-darkgrid')
+plt.style.use('seaborn-v0_8-darkgrid')
+naranja = '#F08228'
+azul = '#1F77B4'
+amarillo = '#F0E14A'
+rojo = '#D62728'
 
 def correlacion(x, y):
     mediaX = np.mean(x)
@@ -83,16 +87,18 @@ for k in ks:
     # correlación flat
     plt.plot(umbrales, correlations_k[k][0], marker='o', label=f'k={k}')
     #plt.axvline(x=umbrales[np.argmax(correlations)], color='r', linestyle='--', label=f'Percentil {np.argmax(correlations)}')    
-plt.xlabel('Umbral de similaridad')
-plt.ylabel('Correlación de las matrices de adyacencia')
-plt.legend()
+plt.xlabel('Umbral de similaridad', fontsize=19)
+plt.ylabel('Correlación de las matrices de adyacencia', fontsize=19)
+plt.legend(fontsize=23)
+plt.tick_params(labelsize=19)
 plt.show()
 
 # correlación eigenvalues
 for k in ks:
     plt.plot(umbrales, correlations_k[k][1], marker='o', label=f'k={k}')
 #plt.axvline(x=umbrales[np.argmax(correlations)], color='r', linestyle='--', label=f'Percentil {np.argmax(correlations)}')
-plt.xlabel('Umbral de similaridad')
-plt.ylabel('Correlación de los autovalores')
-plt.legend()
+plt.xlabel('Umbral de similaridad', fontsize=19)
+plt.ylabel('Correlación de los autovalores', fontsize=19)
+plt.legend(fontsize=23)
+plt.tick_params(labelsize=19)
 plt.show()

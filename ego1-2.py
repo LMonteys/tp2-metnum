@@ -2,6 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
+plt.style.use('seaborn-v0_8-darkgrid')
+naranja = '#F08228'
+azul = '#1F77B4'
+amarillo = '#F0E14A'
+rojo = '#D62728'
+
 def correlacion(x, y):
     mediaX = np.mean(x)
     mediaY = np.mean(y)
