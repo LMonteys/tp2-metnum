@@ -53,14 +53,12 @@ bool check_criterio(const Eigen::VectorXd& v, const Eigen::VectorXd& v_viejo, do
     return make_pair(eigenvalues, eigenvectors);
 }
 
-int main(int argc, char** argv) {
-    if (argc != 3) {
-        cerr << "Usage: " << argv[0] << " input_file output_file" << endl;
-        return 1;
-    }
 
-    const char* input_file = argv[1];
-    const char* output_file = argv[2];
+int main(int argc, char** argv) {
+    const char* input_file = "input_data.txt";
+    const char* output_autovalores = "autovalores.txt";
+    const char* output_autovectores = "autovectores.txt";
+
 
     ifstream fin(input_file);
     if (!fin.is_open()) {
@@ -87,17 +85,13 @@ int main(int argc, char** argv) {
     pair<Eigen::VectorXd, Eigen::MatrixXd> result = eigen(A, nrows, niter, eps);
 
     // Write eigenvalues and eigenvectors to the output file
-    ofstream fout(output_file);
-    if (!fout.is_open()) {
-        cerr << "Error: could not open output file " << output_file << endl;
-        return 1;
-    }
-
-    fout << "Eigenvalues:\n" << result.first << "\n";
-    fout << "Eigenvectors:\n" << result.second << "\n";
-            
-
+    ofstream fout(output_autovalores);
+    fout << result.first;
     fout.close();
 
+    ofstream pout(output_autovectores);
+    pout << result.second;
+    pout.close();
+          
     return 0;
 }
