@@ -1,25 +1,21 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-pt = __import__("Potencia+Deflacion")
-
-file = open("./data/karateclub_matriz.txt", "r")
-filas = file.readlines()
-file.close()
-
-n = len(filas)
-
-matriz_adyacencia = np.zeros((n,n))
-for i in range(n):
-    
-    matriz_adyacencia[i] = filas[i].split()
+import interfaz as it
 
 
-a, v = pt.power_iteration(matriz_adyacencia, eps=1e-12)
+matriz_adyacencia = np.loadtxt("./data/karateclub_matriz.txt")
+n = len(matriz_adyacencia)
 
 
-centralidad = v
-centralidad_normalizada = v / sum(v)
+
+a, v = it.potenciadeflacion(matriz_adyacencia, eps=1e-12)
+
+
+centralidad = v[:,0]
+if sum(centralidad) < 0:
+    centralidad = centralidad * -1
+centralidad_normalizada = centralidad / sum(centralidad)
 
 
 G = nx.from_numpy_array(matriz_adyacencia)
@@ -57,7 +53,7 @@ matriz_diagonal = np.diag(diagonal)
 matriz_laplaciana = matriz_diagonal - matriz_adyacencia
 
 
-a1, v1 = pt.eigen(matriz_laplaciana, num=n, eps=1e-12)
+a1, v1 = it.potenciadeflacion(matriz_laplaciana, eps=1e-12)
 
 a2, v2 = np.linalg.eig(matriz_laplaciana)
 
