@@ -1,0 +1,72 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def check_criterio(v, v_viejo, eps):
+    return np.linalg.norm(v - v_viejo) < eps
+
+
+def power_iteration(A, niter=10_000, eps=1e-6):
+    a = 1
+    v = np.random.rand(A.shape[0])
+    v = v / np.linalg.norm(v)
+
+    for i in range(niter):
+      v_viejo = v
+      v = A @ v
+      v = v / np.linalg.norm(v)
+      if(check_criterio(v, v_viejo, eps)):
+        break
+    a = v.T @ A @ v  
+    return a, v
+
+def eigen(A, num, niter=10000, eps=1e-6):
+    J = A.copy()
+    eigenvalues = []
+    eigenvectors = np.zeros((A.shape[0], num))
+
+    for i in range(num):
+      l, v = power_iteration(J, eps=1e-12)
+      eigenvalues.append(l)
+      eigenvectors[:, i] = v
+      J = J.astype(float)
+      J -= l * np.outer(v, v)
+    return np.array(eigenvalues), eigenvectors
+
+autovaloresEsperados = []
+autovaloresMios = []
+
+for i in range(20):
+  n = 4
+  # Generar una matriz con valores aleatorios
+  matriz = np.random.uniform(1, 10, size=(n, n))
+  # Hacer que la matriz sea simétrica
+  M = (matriz + matriz.T) / 2
+  aval, avec = eigen(M, n)
+  aval.sort()
+  autovaloresMios.append(aval)
+  aval1, avec2 = np.linalg.eig(M)
+  aval1.sort()
+  autovaloresEsperados.append(aval1)
+
+result = []
+for i in range(20):
+  diferencia =  autovaloresMios[i] - autovaloresEsperados[i]
+  modulo_diferencia = np.linalg.norm(diferencia)
+  suma_modulo = np.sum(modulo_diferencia)
+  tamaño_array = len(diferencia)
+  resultado = suma_modulo / tamaño_array
+  result.append(resultado)
+
+
+
+x = np.arange(20)
+# Filtrar valores positivos
+
+# Crear el gráfico solo con los valores positivos
+plt.plot(x, result, '-ro')
+plt.plot(x, result, '.k')
+
+# Ajustar el eje x en incrementos de 1
+plt.xticks(range(int(x.min()), int(x.max()) + 1))
+
+plt.show()
