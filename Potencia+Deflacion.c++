@@ -19,33 +19,40 @@ bool check_criterio(const Eigen::VectorXd& v, const Eigen::VectorXd& v_viejo, do
     return norm_diff < eps;
 }
 
-    pair<double, Eigen::VectorXd> power_iteration(const Eigen::MatrixXd& A, int niter, double eps) {
-    Eigen::VectorXd v = Eigen::VectorXd::Random(A.rows());
-    v.normalize();
-    
+pair<double, Eigen::VectorXd> power_iteration(const Eigen::MatrixXd& A, int niter, double eps) {
+Eigen::VectorXd v = Eigen::VectorXd::Random(A.rows());
+v.normalize();
+
     for (int i = 0; i < niter; i++) {
+        //cout << "Eigen: " << i << endl;
         VectorXd v_viejo = v;
-        v = matrix_vector_multiplication(A, v);
+        v = A * v;
         v.normalize();
+        
         
         // Verificar convergencia
         if (check_criterio(v, v_viejo, eps)) {
+            //cout << "Convergencia en la iteracion " << i << endl;
             break;
         }
+        if(i == niter - 1){
+         //cout << "No convergio" << endl;
+        }
     }
-               
+            
 
     double a_calculado = v.dot(matrix_vector_multiplication(A, v));
     return make_pair(a_calculado, v);
 }
 
-    pair<Eigen::VectorXd, Eigen::MatrixXd> eigen(const Eigen::MatrixXd& A, int num, int niter, double eps) {
+pair<Eigen::VectorXd, Eigen::MatrixXd> eigen(const Eigen::MatrixXd& A, int num, int niter, double eps) {
     Eigen::MatrixXd J = A;
     Eigen::VectorXd eigenvalues(num);
     Eigen::MatrixXd eigenvectors(A.rows(), num);
 
     for (int i = 0; i < num; i++) {
         pair<double, Eigen::VectorXd> result = power_iteration(J, niter, eps);
+        cout << "Autovalor " << i << ": " << result.first << endl;
         eigenvalues(i) = result.first;
         eigenvectors.col(i) = result.second;    
         J = J - (eigenvalues(i) * eigenvectors.col(i) * result.second.transpose());
@@ -78,12 +85,13 @@ int main(int argc, char** argv) {
         }
     }
     fin >> eps;
-
+    eps = pow(10, -8);
     fin.close();
-    int niter = 10000;
-
+    int niter = 5000;
+    cout << "Matriz A: " << A.size() << endl;
+    cout << "Calculating eigenvalues and eigenvectors..." << endl;
     pair<Eigen::VectorXd, Eigen::MatrixXd> result = eigen(A, nrows, niter, eps);
-
+    cout << "Done!" << endl;
     // Write eigenvalues and eigenvectors to the output file
     ofstream fout(output_autovalores);
     fout << result.first;

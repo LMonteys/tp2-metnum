@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+import interfaz as it
+import PotenciaDeflacion as iz
+import interfaz as it
 
 plt.style.use('seaborn-v0_8-darkgrid')
 naranja = '#F08228'
@@ -55,7 +58,9 @@ print(f'Correlación de matrices de adyacencia aplanadas: {correlation}')
 
 
 # Correlación de listas de autovalores
-eigenvalues, _ = np.linalg.eig(adjacency_matrix) # ¿Usar matriz de adyacencia o laplaciana?
-eigenvalues_original = np.linalg.eigvals(adjacency_matrix) # ¿Usar matriz de adyacencia o laplaciana?
-correlation = abs(correlacion(eigenvalues, eigenvalues_original)) # Le puse abs porque me estaba dando un número complejo
+autovalores_originales, _ = it.potenciadeflacion(adjacency_matrix, eps=1e-12)
+autovalores_nuestros, _ = it.potenciadeflacion(nx.adjacency_matrix(G).todense())
+#autovalores_originales, _ = iz.eigen(adjacency_matrix, adjacency_matrix.shape[0], 10000, 1e-6) # ¿Usar matriz de adyacencia o laplaciana?
+#autovalores_nuestros, _ = iz.eigen(nx.adjacency_matrix(G).todense(), nx.adjacency_matrix(G).todense().shape[0], 10000, 1e-6) # ¿Usar matriz de adyacencia o laplaciana?
+correlation = abs(correlacion(autovalores_originales, autovalores_nuestros)) # Le puse abs porque me estaba dando un número complejo
 print(f'Correlación de listas de autovalores: {correlation}')
