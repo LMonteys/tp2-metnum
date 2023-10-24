@@ -18,7 +18,7 @@ def potenciadeflacion(A, eps=1e-12):
 
   print(f'Compilando PotenciaDeflacion.cpp')
   # Compila el archivo C++ utilizando g++
-  compilation_command = f'g++ Potencia+Deflacion.++ -O3 -o potenciaDeflacion'
+  compilation_command = f'g++ Potencia+Deflacion.c++ -O3 -o potenciaDeflacion'
   subprocess.run(compilation_command, shell=True, check=True)
 
   print(f'Ejecutando potenciaDeflacion')

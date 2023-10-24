@@ -85,7 +85,6 @@ int main(int argc, char** argv) {
         }
     }
     fin >> eps;
-    eps = pow(10, -8);
     fin.close();
     int niter = 5000;
     cout << "Matriz A: " << A.size() << endl;

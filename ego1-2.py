@@ -58,7 +58,7 @@ print(f'Correlación de matrices de adyacencia aplanadas: {correlation}')
 
 
 # Correlación de listas de autovalores
-autovalores_originales, _ = it.potenciadeflacion(adjacency_matrix, eps=1e-12)
+autovalores_originales, _ = it.potenciadeflacion(adjacency_matrix)
 autovalores_nuestros, _ = it.potenciadeflacion(nx.adjacency_matrix(G).todense())
 #autovalores_originales, _ = iz.eigen(adjacency_matrix, adjacency_matrix.shape[0], 10000, 1e-6) # ¿Usar matriz de adyacencia o laplaciana?
 #autovalores_nuestros, _ = iz.eigen(nx.adjacency_matrix(G).todense(), nx.adjacency_matrix(G).todense().shape[0], 10000, 1e-6) # ¿Usar matriz de adyacencia o laplaciana?

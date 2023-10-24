@@ -55,7 +55,7 @@ matriz_diagonal = np.diag(diagonal)
 matriz_laplaciana = matriz_diagonal - matriz_adyacencia
 
 
-a1, v1 = iz.potenciadeflacion(matriz_laplaciana, eps=1e-12)
+a1, v1 = iz.potenciadeflacion(matriz_laplaciana, eps=1e-7)
 
 a2, v2 = np.linalg.eig(matriz_laplaciana)
 print(a1, a2)
