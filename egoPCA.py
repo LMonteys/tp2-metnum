@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+import interfaz as it
 
 plt.style.use('seaborn-v0_8-darkgrid')
 naranja = '#F08228'
@@ -11,8 +12,6 @@ rojo = '#D62728'
 def correlacion(x, y):
     mediaX = np.mean(x)
     mediaY = np.mean(y)
-    # if not(any(x) and any(y)):
-    #     return 0
     return (np.dot((x-mediaX),(y-mediaY))) / np.sqrt(np.dot((x-mediaX),(x-mediaX)) * np.dot((y-mediaY),(y-mediaY)))
 
 feat = np.loadtxt("./data/ego-facebook.feat")[:, 1:]  # Sin el primer atributo porque es el id del nodo
@@ -34,10 +33,9 @@ for i, j in edges:
     adjacency_matrix[j, i] = 1
 original_flattened = adjacency_matrix.flatten()
 
-umbrales = np.arange(-0.5, 11, 0.5)
+umbrales = np.arange(-1, 11, 1)
 
-#ks = [2, 4, 6, 8, 10, 25, 50, 100, 200, 319]
-ks = [2, 3, 10, 25, 50, 100, 319]
+ks = [2, 5, 50, 100, 319]
 correlations_k = {}
 
 feat_original = feat
@@ -46,8 +44,19 @@ for k in ks:
     correlations_eigenvalues = []
     featCentered = feat - np.mean(feat, axis=0)
     matrizCovarianza = np.cov(featCentered, rowvar=False)
-    _, autovectores = np.linalg.eigh(matrizCovarianza) # reemplazar por nuestra implementación en C++
-    feat = np.matmul(feat, autovectores[:, -k:])
+    
+    # Cálculo de autovectores con numpy
+    #autovalores, autovectores = np.linalg.eig(matrizCovarianza)
+    ## Ordenar autovectores según autovalores de mayor a menor
+    #indices = np.argsort(autovalores)[::-1]
+    #autovectores = autovectores[:, indices]
+    #autovalores = autovalores[indices]
+
+    # Cálculo de autovectores con C++
+    _, autovectores = it.potenciadeflacion(matrizCovarianza)
+
+    feat = np.matmul(feat, autovectores[:, :k])
+    #feat = np.matmul(feat, autovectores[:, -k:])
     similarity_matrix = feat @ feat.T
     for umbral in umbrales:
         G = nx.Graph()
@@ -58,11 +67,13 @@ for k in ks:
                 if similarity_matrix[i,j] > umbral:
                     G.add_edge(i, j)
 
-        eigenvalues, eigenvectors = np.linalg.eigh(nx.adjacency_matrix(G).todense()) # Reemplazar por nuestra implementación en C++
+        # eigenvalues, eigenvectors = np.linalg.eig(nx.adjacency_matrix(G).todense())  # Usando numpy
+        eigenvalues, eigenvectores = it.potenciadeflacion(nx.adjacency_matrix(G).todense()) # Usando nuestra implementación en C++:
         
         # Correlación de listas de autovalores
-        eigenvalues_original, _ = np.linalg.eigh(adjacency_matrix) # Reemplazar por nuestra implementación en C++
-        correlation_eigenvalues = (correlacion(eigenvalues, eigenvalues_original))
+        # eigenvalues_original, _ = np.linalg.eig(adjacency_matrix) # Usando numpy
+        eigenvalues_original, _ = it.potenciadeflacion(adjacency_matrix) # Usando nuestra implementación en C++:
+        correlation_eigenvalues = abs(correlacion(eigenvalues, eigenvalues_original))
         correlations_eigenvalues.append(correlation_eigenvalues)
 
         # Correlación de matrices de adyacencia aplanadas
@@ -75,12 +86,6 @@ for k in ks:
     correlations_k[k] = (correlations_flat, correlations_eigenvalues)
     feat = feat_original
 
-# Printear maximos
-# for correlations in [correlations_flat, correlations_eigenvalues]:
-#     max_correlation = max(correlations)
-#     max_percentile = np.argmax(correlations)
-#     print(f'Max correlation: {max_correlation}')
-#     print(f'Max percentile: {max_percentile}')
 
 # Graficar maximos
 for k in ks:

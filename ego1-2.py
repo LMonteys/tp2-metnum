@@ -28,6 +28,13 @@ for i, line in enumerate(feat_with_first):
 
 similarity_matrix = feat @ feat.T
 
+# Hisograma de similitudes
+plt.hist(similarity_matrix.flatten(), bins=100)
+plt.xlabel('Similitud')
+plt.ylabel('Cantidad de pares de nodos')
+plt.show()
+
+
 # Acá tomé el percentil 90 por tomar uno cualquiera
 percentile_similarity = np.percentile(similarity_matrix, 90)
 
@@ -58,9 +65,18 @@ print(f'Correlación de matrices de adyacencia aplanadas: {correlation}')
 
 
 # Correlación de listas de autovalores
+
+#Calculo con numpy optimizado
+# autovalores_originales, _ = np.linalg.eig(adjacency_matrix)
+# autovalores_nuestros, _ = np.linalg.eig(nx.adjacency_matrix(G).todense())
+
+# Calculo con c++
 autovalores_originales, _ = it.potenciadeflacion(adjacency_matrix)
 autovalores_nuestros, _ = it.potenciadeflacion(nx.adjacency_matrix(G).todense())
+
+# Calculo con python nuestro metodo de la potencia
 #autovalores_originales, _ = iz.eigen(adjacency_matrix, adjacency_matrix.shape[0], 10000, 1e-6) # ¿Usar matriz de adyacencia o laplaciana?
 #autovalores_nuestros, _ = iz.eigen(nx.adjacency_matrix(G).todense(), nx.adjacency_matrix(G).todense().shape[0], 10000, 1e-6) # ¿Usar matriz de adyacencia o laplaciana?
+
 correlation = abs(correlacion(autovalores_originales, autovalores_nuestros)) # Le puse abs porque me estaba dando un número complejo
 print(f'Correlación de listas de autovalores: {correlation}')

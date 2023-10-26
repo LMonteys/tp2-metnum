@@ -24,7 +24,6 @@ Eigen::VectorXd v = Eigen::VectorXd::Random(A.rows());
 v.normalize();
 
     for (int i = 0; i < niter; i++) {
-        //cout << "Eigen: " << i << endl;
         VectorXd v_viejo = v;
         v = A * v;
         v.normalize();
@@ -49,14 +48,22 @@ pair<Eigen::VectorXd, Eigen::MatrixXd> eigen(const Eigen::MatrixXd& A, int num, 
     Eigen::MatrixXd J = A;
     Eigen::VectorXd eigenvalues(num);
     Eigen::MatrixXd eigenvectors(A.rows(), num);
-
+    int progress = 0;  // Inicializar barra de progreso
+    cout << "Calculo de autovalores y autovectores: [" << string(50, ' ') << "] 0%" << flush; 
     for (int i = 0; i < num; i++) {
         pair<double, Eigen::VectorXd> result = power_iteration(J, niter, eps);
-        cout << "Autovalor " << i << ": " << result.first << endl;
         eigenvalues(i) = result.first;
         eigenvectors.col(i) = result.second;    
         J = J - (eigenvalues(i) * eigenvectors.col(i) * result.second.transpose());
+        
+        // actualizar barra de progreso: 
+        int new_progress = (i + 1) * 50 / num;
+        if (new_progress > progress) {
+            progress = new_progress;
+            cout << "\rCalculo de autovalores y autovectores: [" << string(progress, '=') << string(50 - progress, ' ') << "] " << progress * 2 << "%" << flush;
+        }
     }
+    cout << "\rCalculo de autovalores y autovectores: [" << string(50, '=') << "] 100%" << endl;  // completar barra de progreso
     return make_pair(eigenvalues, eigenvectors);
 }
 
@@ -87,8 +94,7 @@ int main(int argc, char** argv) {
     fin >> eps;
     fin.close();
     int niter = 5000;
-    cout << "Matriz A: " << A.size() << endl;
-    cout << "Calculating eigenvalues and eigenvectors..." << endl;
+    cout << "Calculando autovalores y autovectores..." << endl;
     pair<Eigen::VectorXd, Eigen::MatrixXd> result = eigen(A, nrows, niter, eps);
     cout << "Done!" << endl;
     // Write eigenvalues and eigenvectors to the output file

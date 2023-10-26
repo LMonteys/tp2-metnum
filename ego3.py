@@ -37,7 +37,7 @@ for i, j in edges:
     adjacency_matrix[j, i] = 1
 original_flattened = adjacency_matrix.flatten()
 
-umbrales = np.arange(-0.25, 12, 0.25)
+umbrales = np.arange(-1, 12, 1)
 
 for umbral in umbrales:
     G = nx.Graph()
@@ -48,11 +48,11 @@ for umbral in umbrales:
             if similarity_matrix[i,j] > umbral:
                 G.add_edge(i, j)
 
-    eigenvalues, eigenvectors = np.linalg.eigh(nx.adjacency_matrix(G).todense())
+    eigenvalues, eigenvectors = np.linalg.eig(nx.adjacency_matrix(G).todense())
     
     # Correlación de listas de autovalores
-    eigenvalues_original, _ = np.linalg.eigh(adjacency_matrix)
-    correlation_eigenvalues = (correlacion(eigenvalues, eigenvalues_original))
+    eigenvalues_original, _ = np.linalg.eig(adjacency_matrix)
+    correlation_eigenvalues = abs(correlacion(eigenvalues, eigenvalues_original))
     correlations_eigenvalues.append(correlation_eigenvalues)
 
     # Correlación de matrices de adyacencia aplanadas
