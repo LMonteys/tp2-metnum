@@ -1,9 +1,8 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-import interfaz as iz
+import interfaz as it
 import numpy as np
-import subprocess
 
 
 matriz_adyacencia = np.loadtxt("./data/karateclub_matriz.txt")
@@ -11,13 +10,15 @@ n = len(matriz_adyacencia)
 
 
 
-a, v = iz.potenciadeflacion(matriz_adyacencia)
+a, v = it.potenciadeflacion(matriz_adyacencia)
 
 
 centralidad = v[:,0]
 if sum(centralidad) < 0:
     centralidad = centralidad * -1
 centralidad_normalizada = centralidad / sum(centralidad)
+
+
 
 
 G = nx.from_numpy_array(matriz_adyacencia)
@@ -54,7 +55,7 @@ matriz_diagonal = np.diag(diagonal)
 matriz_laplaciana = matriz_diagonal - matriz_adyacencia
 
 
-a1, v1 = iz.potenciadeflacion(matriz_laplaciana)
+a1, v1 = it.potenciadeflacion(matriz_laplaciana)
 
 a2, v2 = np.linalg.eig(matriz_laplaciana)
 
@@ -77,9 +78,6 @@ for i in range(n):
         max_v_np = i
 
 
-
-
-#print(np.sort(abs(a1)), '\n', np.sort(abs(a2)))
 
 
 G = nx.from_numpy_array(matriz_adyacencia)
