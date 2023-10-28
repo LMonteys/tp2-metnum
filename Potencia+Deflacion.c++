@@ -31,11 +31,9 @@ v.normalize();
         
         // Verificar convergencia
         if (check_criterio(v, v_viejo, eps)) {
-            //cout << "Convergencia en la iteracion " << i << endl;
             break;
         }
         if(i == niter - 1){
-         //cout << "No convergio" << endl;
         }
     }
             
@@ -80,7 +78,6 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Read matrix from file
     int nrows, ncols;
     double eps;
     fin >> nrows >> ncols;
@@ -97,7 +94,6 @@ int main(int argc, char** argv) {
     cout << "Calculando autovalores y autovectores..." << endl;
     pair<Eigen::VectorXd, Eigen::MatrixXd> result = eigen(A, nrows, niter, eps);
     cout << "Done!" << endl;
-    // Write eigenvalues and eigenvectors to the output file
     ofstream fout(output_autovalores);
     fout << result.first;
     fout.close();

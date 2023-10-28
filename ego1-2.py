@@ -59,18 +59,18 @@ for i, j in edges:
 original_flattened = adjacency_matrix.flatten()
 nuestra_flattened = nx.adjacency_matrix(G).todense().flatten()
 
-correlation = correlacion(original_flattened, nuestra_flattened) # ¿¿¿A esto se refieren con "correlación"??? ¿O a producto interno?
+correlation = correlacion(original_flattened, nuestra_flattened)
 print(f'Correlación de matrices de adyacencia aplanadas: {correlation}')
 
 
 
-# Correlación de listas de autovalores
 
-#Calculo con numpy optimizado
+
+#Calculo con numpy optimizado (Rápido)
 # autovalores_originales, _ = np.linalg.eig(adjacency_matrix)
 # autovalores_nuestros, _ = np.linalg.eig(nx.adjacency_matrix(G).todense())
 
-# Calculo con c++
+# Calculo con c++ (Muy lento)
 autovalores_originales, _ = it.potenciadeflacion(adjacency_matrix)
 autovalores_nuestros, _ = it.potenciadeflacion(nx.adjacency_matrix(G).todense())
 
