@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+import interfaz as it
 
 plt.style.use('seaborn-v0_8-darkgrid')
 naranja = '#F08228'
@@ -48,10 +49,12 @@ for umbral in umbrales:
             if similarity_matrix[i,j] > umbral:
                 G.add_edge(i, j)
 
-    eigenvalues, eigenvectors = np.linalg.eig(nx.adjacency_matrix(G).todense())
+    # eigenvalues, eigenvectors = np.linalg.eig(nx.adjacency_matrix(G).todense())
+    eigenvalues, _ = it.potenciadeflacion(nx.adjacency_matrix(G).todense())
     
     # Correlación de listas de autovalores
-    eigenvalues_original, _ = np.linalg.eig(adjacency_matrix)
+    # eigenvalues_original, _ = np.linalg.eig(adjacency_matrix)
+    eigenvalues_original, _ = it.potenciadeflacion(adjacency_matrix)
     correlation_eigenvalues = abs(correlacion(eigenvalues, eigenvalues_original))
     correlations_eigenvalues.append(correlation_eigenvalues)
 
@@ -81,12 +84,6 @@ color = naranja
 ax2.set_ylabel('Correlación de matrices de adyacencia', color=color)
 ax2.plot(umbrales, correlations_flat, color=color, marker='o')
 ax2.tick_params(axis='y', labelcolor=color)
-
-# add vertical lines
-#ax1.axvline(x=umbrales[np.argmax(correlations_eigenvalues)], color='g', linestyle='--', label=f'Eigenvalues óptimo: {umbrales[np.argmax(correlations_eigenvalues[0])]}')
-#ax2.axvline(x=umbrales[np.argmax(correlations_flat)], color='r', linestyle='--', label=f'Flat óptimo: {umbrales[np.argmax(correlations_flat)]}')
-#plt.axvline(x=umbrales[np.argmax(correlations)], color='orange', linestyle='--', label=f'Primer óptimo: {umbrales[np.argmax(correlations)]}')    
-#plt.axvline(x=umbrales[::-1][np.argmax(correlations[::-1])], color='red', linestyle='--', label=f'Último óptimo: {umbrales[::-1][np.argmax(correlations[::-1])]}')    
 
 fig.tight_layout()
 plt.show()

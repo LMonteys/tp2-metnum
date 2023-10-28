@@ -91,7 +91,7 @@ for k in ks:
 for k in ks:
     # correlación flat
     plt.plot(umbrales, correlations_k[k][0], marker='o', label=f'k={k}')
-    #plt.axvline(x=umbrales[np.argmax(correlations)], color='r', linestyle='--', label=f'Percentil {np.argmax(correlations)}')    
+plt.axhline(y=0.10987884773143827, color='r', linestyle='--')  # para marcar el maximo encontrado en ego3.py
 plt.xlabel('Umbral de similaridad', fontsize=19)
 plt.ylabel('Correlación de las matrices de adyacencia', fontsize=19)
 plt.legend(fontsize=23)
@@ -101,7 +101,7 @@ plt.show()
 # correlación eigenvalues
 for k in ks:
     plt.plot(umbrales, correlations_k[k][1], marker='o', label=f'k={k}')
-#plt.axvline(x=umbrales[np.argmax(correlations)], color='r', linestyle='--', label=f'Percentil {np.argmax(correlations)}')
+plt.axhline(y=0.592470078611196, color='r', linestyle='--')  # para marcar el maximo encontrado en ego3.py
 plt.xlabel('Umbral de similaridad', fontsize=19)
 plt.ylabel('Correlación de los autovalores', fontsize=19)
 plt.legend(fontsize=23)
