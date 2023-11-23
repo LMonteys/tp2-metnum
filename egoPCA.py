@@ -54,6 +54,8 @@ for k in ks:
 
     # Cálculo de autovectores con C++
     _, autovectores = it.potenciadeflacion(matrizCovarianza)
+    # _, autovectores = np.linalg.eig(matrizCovarianza) # Usando numpy
+
 
     feat = np.matmul(feat, autovectores[:, :k])
     #feat = np.matmul(feat, autovectores[:, -k:])
@@ -69,10 +71,12 @@ for k in ks:
 
         # eigenvalues, eigenvectors = np.linalg.eig(nx.adjacency_matrix(G).todense())  # Usando numpy
         eigenvalues, eigenvectores = it.potenciadeflacion(nx.adjacency_matrix(G).todense()) # Usando nuestra implementación en C++:
+        eigenvalues = np.sort(eigenvalues)
         
         # Correlación de listas de autovalores
         # eigenvalues_original, _ = np.linalg.eig(adjacency_matrix) # Usando numpy
         eigenvalues_original, _ = it.potenciadeflacion(adjacency_matrix) # Usando nuestra implementación en C++:
+        eigenvalues_original = np.sort(eigenvalues_original)
         correlation_eigenvalues = abs(correlacion(eigenvalues, eigenvalues_original))
         correlations_eigenvalues.append(correlation_eigenvalues)
 
@@ -101,7 +105,7 @@ plt.show()
 # correlación eigenvalues
 for k in ks:
     plt.plot(umbrales, correlations_k[k][1], marker='o', label=f'k={k}')
-plt.axhline(y=0.592470078611196, color='r', linestyle='--')  # para marcar el maximo encontrado en ego3.py
+plt.axhline(y=0.951166947333125, color='r', linestyle='--')  # para marcar el maximo encontrado en ego3.py
 plt.xlabel('Umbral de similaridad', fontsize=19)
 plt.ylabel('Correlación de los autovalores', fontsize=19)
 plt.legend(fontsize=23)

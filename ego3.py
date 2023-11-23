@@ -21,7 +21,8 @@ edges = np.loadtxt("./data/ego-facebook.edges", dtype=int)
 # Mapear ids de nodo a índices de matriz
 edge_map = {}
 for i, line in enumerate(feat_with_first):
-    edge_map[line[0]] = i
+    # print(int(line[0]), i)
+    edge_map[int(line[0])] = i
 
 similarity_matrix = feat @ feat.T
 
@@ -41,25 +42,27 @@ original_flattened = adjacency_matrix.flatten()
 umbrales = np.arange(-1, 12, 1)
 
 for umbral in umbrales:
-    G = nx.Graph()
-    for i in range(feat.shape[0]):
-        G.add_node(i)
+    adjacency_matrix_pred = np.zeros((feat.shape[0], feat.shape[0]))
     for i in range(similarity_matrix.shape[0]):
         for j in range(i+1, similarity_matrix.shape[1]):
             if similarity_matrix[i,j] > umbral:
-                G.add_edge(i, j)
+                adjacency_matrix_pred[i,j] = 1
+                adjacency_matrix_pred[j,i] = 1
 
-    # eigenvalues, eigenvectors = np.linalg.eig(nx.adjacency_matrix(G).todense())
-    eigenvalues, _ = it.potenciadeflacion(nx.adjacency_matrix(G).todense())
+    # eigenvalues, eigenvectors = np.linalg.eig(adjacency_matrix_pred) # Usando numpy
+    eigenvalues, _ = it.potenciadeflacion(adjacency_matrix_pred) # Usando nuestra implementación en C++
+    eigenvalues = np.sort(eigenvalues)
     
-    # Correlación de listas de autovalores
-    # eigenvalues_original, _ = np.linalg.eig(adjacency_matrix)
-    eigenvalues_original, _ = it.potenciadeflacion(adjacency_matrix)
+    # Correlación de listas de autovalores:
+    # eigenvalues_original, _ = np.linalg.eig(adjacency_matrix) # Usando numpy
+    eigenvalues_original, _ = it.potenciadeflacion(adjacency_matrix) # Usando nuestra implementación en C++
+    eigenvalues_original = np.sort(eigenvalues_original)
+
     correlation_eigenvalues = abs(correlacion(eigenvalues, eigenvalues_original))
     correlations_eigenvalues.append(correlation_eigenvalues)
 
-    # Correlación de matrices de adyacencia aplanadas
-    nuestra_flattened = nx.adjacency_matrix(G).todense().flatten()
+    # Correlación de matrices de adyacencia aplanadas:
+    nuestra_flattened = adjacency_matrix_pred.flatten()
     correlation_flat = correlacion(original_flattened, nuestra_flattened)
     correlations_flat.append(correlation_flat)
     print(f'Umbral: {umbral}, correlacion flat: {correlation_flat}, correlacion eigenvalues: {correlation_eigenvalues}')
