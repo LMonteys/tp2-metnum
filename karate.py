@@ -79,6 +79,16 @@ for i in range(n):
 
 
 
+ax = plt.subplot()
+for i in range(len(correlaciones)):
+    p = ax.bar(i, round(abs(correlaciones[i]), 2), 0.3, label=f'{round(abs(a1[i]), 2)}')
+    ax.bar_label(p, label_type='center')
+ax.legend()
+plt.xlabel('autovalor')
+plt.ylabel('correlación')
+plt.title('CORRELACIONES POTENCIA+DEFLACIÓN')
+plt.show()
+
 
 G = nx.from_numpy_array(matriz_adyacencia)
 node_labels = {node:(str(node+1)+"|"+str(round(v1[node, max_v], 2))) for node in G.nodes()}
